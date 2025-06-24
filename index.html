@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beaconhouse EdTech Operations Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            opacity: 0; /* For load animation */
+            transition: opacity 0.5s ease;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4a90e2, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #4a90e2;
+        }
+
+        .nav-cta {
+            background: linear-gradient(45deg, #4a90e2, #8e44ad);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 120px 0 60px;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero h1 .brand {
+            background: linear-gradient(45deg, #4a90e2, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 .main-title {
+            color: #2c3e50;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #4a90e2, #57c0d8);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.3);
+        }
+
+        .cta-button::before {
+            content: '🔐';
+            font-size: 1.2em;
+        }
+
+        /* Section Scroll Margin for Fixed Header */
+        #features, #benefits, #workflow, #about, #contact {
+            scroll-margin-top: 100px; 
+        }
+        
+        /* Features Section */
+        .features {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 3rem;
+            font-size: 1.1em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0; 
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem; 
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white; 
+        }
+
+        .feature-card:nth-child(1) .feature-icon { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .feature-card:nth-child(2) .feature-icon { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
+        .feature-card:nth-child(3) .feature-icon { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .feature-card:nth-child(4) .feature-icon { background: linear-gradient(45deg, #e67e22, #d35400); }
+
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        .benefits-content h2 {
+            font-size: 2.2em;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .benefit-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            color: white; 
+        }
+
+        .benefit-item:nth-child(1) .benefit-icon { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .benefit-item:nth-child(2) .benefit-icon { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
+        .benefit-item:nth-child(3) .benefit-icon { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+
+        .benefit-text h4 {
+            font-size: 1.1em;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .benefit-text p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* CTA Section (within Benefits Grid) */
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2em;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            font-size: 1.1em;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-section .cta-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-section .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Workflow Section Styling */
+        .workflow {
+            padding: 60px 0;
+            margin-bottom: 80px;
+        }
+
+        .workflow .section-subtitle {
+            margin-bottom: 4rem;
+        }
+
+        .workflow-steps {
+            position: relative;
+            max-width: 800px; 
+            margin: 3rem auto 0;
+        }
+
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px; 
+            bottom: 15px; 
+            left: 30px; 
+            width: 4px;
+            background-color: #d0d6e0;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .workflow-step {
+            display: flex;
+            position: relative;
+            margin-bottom: 3rem;
+            align-items: flex-start;
+        }
+        .workflow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .workflow-icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            color: white;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+            margin-right: 2rem;
+            box-shadow: 0 0 0 6px rgba(245, 247, 250, 0.9); 
+            opacity: 0; 
+            transform: scale(0.7); 
+        }
+        .workflow-step:nth-child(1) .workflow-icon-container { background: linear-gradient(45deg, #4a90e2, #57c0d8); }
+        .workflow-step:nth-child(2) .workflow-icon-container { background: linear-gradient(45deg, #8e44ad, #9b59b6); }
+        .workflow-step:nth-child(3) .workflow-icon-container { background: linear-gradient(45deg, #f39c12, #e67e22); } 
+
+        .workflow-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            flex-grow: 1;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; 
+        }
+        .workflow-content:hover {
+            transform: translateY(-3px) translateX(3px);
+            box-shadow: 0 12px 30px rgba(74, 144, 226, 0.15);
+        }
+
+        .workflow-content h3 {
+            font-size: 1.4em;
+            margin-bottom: 0.75rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .workflow-content p {
+            color: #555;
+            line-height: 1.7;
+        }
+
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer h3 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .footer-copyright {
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) { /* Tablets */
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            }
+        }
+        
+        @media (max-width: 768px) { /* Mobile */
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .benefits-content { /* Center heading on mobile */
+                text-align: center;
+            }
+            .benefit-item { /* Center items visually on mobile */
+                justify-content: center; 
+                text-align: left; /* Keep text itself left-aligned */
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            /* Workflow mobile adjustments */
+            .workflow-steps {
+                margin-left: 1rem; 
+                margin-right: 1rem;
+            }
+            .workflow-steps::before {
+                left: 25px; /* Adjust timeline position */
+            }
+            .workflow-icon-container {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5em;
+                margin-right: 1.5rem;
+            }
+            .workflow-content h3 {
+                font-size: 1.2em;
+            }
+            .workflow-content p {
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 576px) { /* Extra small screens - refine workflow further */
+            .container {
+                padding: 0 1rem; /* Reduce overall container padding */
+            }
+            .nav-container {
+                padding: 0 1rem;
+            }
+            .hero {
+                padding: 100px 0 40px;
+            }
+             .hero h1 {
+                font-size: 2.2em;
+            }
+            .section-title {
+                font-size: 1.8em;
+            }
+            .section-subtitle {
+                font-size: 1em;
+                margin-bottom: 2rem;
+            }
+            .cta-section {
+                padding: 2rem 1.5rem;
+            }
+            .cta-section h2 {
+                font-size: 1.8em;
+            }
+
+            /* Workflow specific for very small screens */
+            .workflow-steps::before {
+                left: 20px; 
+                top: 10px; /* Align with smaller icon */
+                bottom: 10px; /* Align with smaller icon */
+            }
+            .workflow-icon-container {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3em;
+                margin-right: 1rem;
+                box-shadow: 0 0 0 4px rgba(245, 247, 250, 0.9); /* Smaller outline */
+            }
+            .workflow-content {
+                padding: 1rem 1.2rem;
+            }
+             .workflow-content h3 {
+                font-size: 1.1em;
+            }
+            .workflow-content p {
+                font-size: 0.9em;
+            }
+        }
+
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes iconPopIn {
+            from { opacity: 0; transform: scale(0.7); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .feature-card { animation: fadeInUp 0.6s ease-out forwards; }
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.2s; }
+        .feature-card:nth-child(4) { animation-delay: 0.3s; }
+
+        .workflow-step .workflow-content { animation: fadeInUp 0.5s ease-out forwards; }
+        .workflow-step:nth-child(1) .workflow-content { animation-delay: 0.2s; }
+        .workflow-step:nth-child(2) .workflow-content { animation-delay: 0.4s; }
+        .workflow-step:nth-child(3) .workflow-content { animation-delay: 0.6s; }
+
+        .workflow-icon-container { animation: iconPopIn 0.4s ease-out forwards; }
+        .workflow-step:nth-child(1) .workflow-icon-container { animation-delay: 0.1s; }
+        .workflow-step:nth-child(2) .workflow-icon-container { animation-delay: 0.3s; }
+        .workflow-step:nth-child(3) .workflow-icon-container { animation-delay: 0.5s; }
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Beaconhouse EdTech</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#benefits">Benefits</a></li>
+                    <li><a href="#workflow">Workflow</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <a href="#login" class="nav-cta">Get Started</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>
+                <span class="brand">Beaconhouse EdTech</span><br>
+                <span class="main-title">Operations Management</span>
+            </h1>
+            <p>Streamline your educational operations with our comprehensive management system. Track tasks, manage teams, schedule meetings, and boost productivity across your organization.</p>
+            <a href="#login" class="cta-button">Login with Official ID</a>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <h2 class="section-title">Powerful Features for Educational Excellence</h2>
+            <p class="section-subtitle">Everything you need to manage your educational operations efficiently and effectively.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>Task Management</h3>
+                    <p>Create, assign, and track tasks with real-time progress monitoring and deadline management.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Team Collaboration</h3>
+                    <p>Manage team members, view individual dashboards, and track performance across departments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Meeting Scheduler</h3>
+                    <p>Schedule meetings, manage attendees, and keep track of all your important appointments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Get insights with real-time KPI tracking, productivity metrics, and performance analytics.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="benefits" id="benefits">
+            <div class="benefits-content">
+                <h2>Why Choose Our EdTech Operations System?</h2>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📈</div>
+                    <div class="benefit-text">
+                        <h4>Increase Productivity</h4>
+                        <p>Streamline workflows and eliminate bottlenecks with our intuitive task management system.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-text">
+                        <h4>Goal Achievement</h4>
+                        <p>Track progress towards targets with visual timelines and performance metrics.</p>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-text">
+                        <h4>Real-time Updates</h4>
+                        <p>Stay synchronized with instant notifications and live status updates across teams.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-section">
+                <h2>Ready to Get Started?</h2>
+                <p>Join your team and start managing educational operations more effectively today.</p>
+                <a href="#access" class="cta-button">Access with Official ID</a>
+                <p style="font-size: 0.9em; margin-top: 1rem; opacity: 0.8;">Secure authentication through Beaconhouse official credentials</p>
+            </div>
+        </section>
+
+        <!-- Our Integrated Workflow Section -->
+        <section class="workflow" id="workflow">
+            <!-- Note: Removed the nested .container here as the parent .container already handles max-width and padding.
+                 The responsive rules for .workflow-steps (margin-left/right) will handle edge spacing. -->
+            <h2 class="section-title">Experience Our Integrated Workflow</h2>
+            <p class="section-subtitle">Discover how our platform cohesively manages operations from start to finish.</p>
+    
+            <div class="workflow-steps"> 
+                <div class="workflow-step">
+                    <div class="workflow-icon-container">
+                        <span class="workflow-icon">🚀</span>
+                    </div>
+                    <div class="workflow-content">
+                        <h3>1. Centralized Planning & Setup</h3>
+                        <p>Easily define projects, set objectives, and onboard team members. Our system provides templates and tools to get you started quickly, ensuring everyone is aligned from day one.</p>
+                    </div>
+                </div>
+    
+                <div class="workflow-step">
+                    <div class="workflow-icon-container">
+                        <span class="workflow-icon">🔄</span>
+                    </div>
+                    <div class="workflow-content">
+                        <h3>2. Dynamic Execution & Collaboration</h3>
+                        <p>Assign tasks, track progress in real-time, and foster seamless communication. Integrated tools for file sharing, discussions, and approvals keep projects moving forward efficiently.</p>
+                    </div>
+                </div>
+    
+                <div class="workflow-step">
+                    <div class="workflow-icon-container">
+                        <span class="workflow-icon">💡</span> 
+                    </div>
+                    <div class="workflow-content">
+                        <h3>3. Insightful Reporting & Optimization</h3>
+                        <p>Monitor performance with comprehensive analytics and customizable dashboards. Identify bottlenecks, celebrate successes, and continuously refine your processes for optimal outcomes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- End of main .container -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <h3>Beaconhouse EdTech Operations</h3>
+            <p>Empowering educational excellence through intelligent operations management.</p>
+            <p class="footer-copyright">© 2024 Beaconhouse Group. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start' 
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        const header = document.querySelector('.header');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.15)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Add loading animation for body
+        window.addEventListener('load', () => {
+            setTimeout(() => { 
+                document.body.style.opacity = '1';
+            }, 50); 
+        });
+
+        // Interactive button effects
+        document.querySelectorAll('.cta-button, .nav-cta').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.02)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            
+            if (hero) { 
+                if (scrolled < window.innerHeight * 1.5) { // Apply only when hero is somewhat in view (extended a bit)
+                    const rate = scrolled * -0.25; // Reduced rate for more subtlety
+                    hero.style.transform = `translateY(${rate}px)`;
+                } else if (scrolled === 0) { // Reset if scrolled to top
+                     hero.style.transform = `translateY(0px)`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
