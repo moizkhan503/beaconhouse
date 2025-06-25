@@ -44,12 +44,25 @@
         }
 
         .logo {
-            font-size: 1.5em;
+            font-size: 1.5em; /* Original size from your provided code */
             font-weight: 700;
             background: linear-gradient(45deg, #4a90e2, #8e44ad);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            /* Added for layout with image */
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-image-element {
+            height: 28px; /* Adjust based on your logo's aspect ratio and desired size */
+            width: auto;  /* Maintain aspect ratio */
+            margin-right: 8px; /* Space between image and text */
+            /* Ensure image itself isn't affected by text gradient if it were a vector with text paths */
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            -webkit-text-fill-color: initial;
         }
 
         .nav-links {
@@ -93,7 +106,7 @@
 
         .hero {
             text-align: center;
-            padding: 120px 0 60px;
+            padding: 120px 0 60px; /* Increased top padding for fixed header */
             margin-bottom: 60px;
         }
 
@@ -152,9 +165,9 @@
 
         /* Section Scroll Margin for Fixed Header */
         #features, #benefits, #workflow, #about, #contact {
-            scroll-margin-top: 100px; 
+            scroll-margin-top: 100px;
         }
-        
+
         /* Features Section */
         .features {
             margin-bottom: 80px;
@@ -177,7 +190,7 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); 
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
             margin-bottom: 4rem;
         }
@@ -191,7 +204,7 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            opacity: 0; 
+            opacity: 0;
         }
 
         .feature-card:hover {
@@ -202,13 +215,13 @@
         .feature-icon {
             width: 60px;
             height: 60px;
-            margin: 0 auto 1.5rem; 
+            margin: 0 auto 1.5rem;
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5em;
-            color: white; 
+            color: white;
         }
 
         .feature-card:nth-child(1) .feature-icon { background: linear-gradient(45deg, #3498db, #2980b9); }
@@ -260,7 +273,7 @@
             justify-content: center;
             font-size: 1.2em;
             flex-shrink: 0;
-            color: white; 
+            color: white;
         }
 
         .benefit-item:nth-child(1) .benefit-icon { background: linear-gradient(45deg, #3498db, #2980b9); }
@@ -310,7 +323,7 @@
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.5);
         }
-        
+
         /* Workflow Section Styling */
         .workflow {
             padding: 60px 0;
@@ -323,16 +336,16 @@
 
         .workflow-steps {
             position: relative;
-            max-width: 800px; 
+            max-width: 800px;
             margin: 3rem auto 0;
         }
 
         .workflow-steps::before {
             content: '';
             position: absolute;
-            top: 15px; 
-            bottom: 15px; 
-            left: 30px; 
+            top: 15px;
+            bottom: 15px;
+            left: 30px;
             width: 4px;
             background-color: #d0d6e0;
             border-radius: 2px;
@@ -362,13 +375,13 @@
             z-index: 2;
             flex-shrink: 0;
             margin-right: 2rem;
-            box-shadow: 0 0 0 6px rgba(245, 247, 250, 0.9); 
-            opacity: 0; 
-            transform: scale(0.7); 
+            box-shadow: 0 0 0 6px rgba(245, 247, 250, 0.9);
+            opacity: 0;
+            transform: scale(0.7);
         }
         .workflow-step:nth-child(1) .workflow-icon-container { background: linear-gradient(45deg, #4a90e2, #57c0d8); }
         .workflow-step:nth-child(2) .workflow-icon-container { background: linear-gradient(45deg, #8e44ad, #9b59b6); }
-        .workflow-step:nth-child(3) .workflow-icon-container { background: linear-gradient(45deg, #f39c12, #e67e22); } 
+        .workflow-step:nth-child(3) .workflow-icon-container { background: linear-gradient(45deg, #f39c12, #e67e22); }
 
         .workflow-content {
             background: rgba(255, 255, 255, 0.95);
@@ -379,7 +392,7 @@
             flex-grow: 1;
             border: 1px solid rgba(0,0,0,0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0; 
+            opacity: 0;
         }
         .workflow-content:hover {
             transform: translateY(-3px) translateX(3px);
@@ -426,11 +439,14 @@
         /* Responsive Design */
         @media (max-width: 1024px) { /* Tablets */
             .features-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             }
         }
-        
+
         @media (max-width: 768px) { /* Mobile */
+             .nav-container {
+                 justify-content: space-between;
+            }
             .nav-links {
                 display: none;
             }
@@ -451,25 +467,24 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-            .benefits-content { /* Center heading on mobile */
+            .benefits-content {
                 text-align: center;
             }
-            .benefit-item { /* Center items visually on mobile */
-                justify-content: center; 
-                text-align: left; /* Keep text itself left-aligned */
+            .benefit-item {
+                justify-content: center;
+                text-align: left;
             }
 
             .section-title {
                 font-size: 2em;
             }
 
-            /* Workflow mobile adjustments */
             .workflow-steps {
-                margin-left: 1rem; 
+                margin-left: 1rem;
                 margin-right: 1rem;
             }
             .workflow-steps::before {
-                left: 25px; /* Adjust timeline position */
+                left: 25px;
             }
             .workflow-icon-container {
                 width: 50px;
@@ -485,11 +500,8 @@
             }
         }
 
-        @media (max-width: 576px) { /* Extra small screens - refine workflow further */
-            .container {
-                padding: 0 1rem; /* Reduce overall container padding */
-            }
-            .nav-container {
+        @media (max-width: 576px) { /* Extra small screens */
+            .container, .nav-container {
                 padding: 0 1rem;
             }
             .hero {
@@ -512,18 +524,17 @@
                 font-size: 1.8em;
             }
 
-            /* Workflow specific for very small screens */
             .workflow-steps::before {
-                left: 20px; 
-                top: 10px; /* Align with smaller icon */
-                bottom: 10px; /* Align with smaller icon */
+                left: 20px;
+                top: 10px;
+                bottom: 10px;
             }
             .workflow-icon-container {
                 width: 40px;
                 height: 40px;
                 font-size: 1.3em;
                 margin-right: 1rem;
-                box-shadow: 0 0 0 4px rgba(245, 247, 250, 0.9); /* Smaller outline */
+                box-shadow: 0 0 0 4px rgba(245, 247, 250, 0.9);
             }
             .workflow-content {
                 padding: 1rem 1.2rem;
@@ -542,7 +553,7 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         @keyframes iconPopIn {
             from { opacity: 0; transform: scale(0.7); }
             to { opacity: 1; transform: scale(1); }
@@ -569,14 +580,18 @@
     <!-- Header -->
     <header class="header">
         <div class="nav-container">
-            <div class="logo">Beaconhouse EdTech</div>
+            <div class="logo">
+                <img src="logo.jpg" alt="BEOMS Icon" class="logo-image-element"> <!-- Replace with your logo image -->
+                BEOMS
+            </div>
             <nav>
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
                     <li><a href="#benefits">Benefits</a></li>
                     <li><a href="#workflow">Workflow</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <!-- Add About and Contact if you create those sections -->
+                    <!-- <li><a href="#about">About</a></li> -->
+                    <!-- <li><a href="#contact">Contact</a></li> -->
                 </ul>
             </nav>
             <a href="dashboard.html" class="nav-cta">Dashboard</a>
@@ -587,7 +602,7 @@
         <!-- Hero Section -->
         <section class="hero">
             <h1>
-                <span class="brand">Beaconhouse EdTech</span><br>
+                <span class="brand">Beaconhouse EdTech</span><br> <!-- Changed "BEOMS" here to full name -->
                 <span class="main-title">Operations Management</span>
             </h1>
             <p>Streamline your educational operations with our comprehensive management system. Track tasks, manage teams, schedule meetings, and boost productivity across your organization.</p>
@@ -598,7 +613,7 @@
         <section class="features" id="features">
             <h2 class="section-title">Powerful Features for Educational Excellence</h2>
             <p class="section-subtitle">Everything you need to manage your educational operations efficiently and effectively.</p>
-            
+
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">✓</div>
@@ -650,22 +665,20 @@
                 </div>
             </div>
             <div class="cta-section">
-                <h2>Manager and analytics dashboard</h2>
-                <p>Join your team and start managing educational operations more effectively today.</p>
-                <a href="manager_dashboard.html" class="cta-button">Manager Dashboard</a>
-                 <a href="analytics.html" class="cta-button">Analytics Dashboard</a>
+                <h2>Manager and Analytics Dashboard</h2>
+                <p>Access specialized views for oversight and data-driven decision making.</p>
+                <a href="line_manager_dashboard.html" class="cta-button">Manager Dashboard</a>
+                <a href="analytics.html" class="cta-button" style="margin-top: 1rem;">Analytics Dashboard</a>
                 <p style="font-size: 0.9em; margin-top: 1rem; opacity: 0.8;">Secure authentication through Beaconhouse official credentials</p>
             </div>
         </section>
 
         <!-- Our Integrated Workflow Section -->
         <section class="workflow" id="workflow">
-            <!-- Note: Removed the nested .container here as the parent .container already handles max-width and padding.
-                 The responsive rules for .workflow-steps (margin-left/right) will handle edge spacing. -->
             <h2 class="section-title">Experience Our Integrated Workflow</h2>
             <p class="section-subtitle">Discover how our platform cohesively manages operations from start to finish.</p>
-    
-            <div class="workflow-steps"> 
+
+            <div class="workflow-steps">
                 <div class="workflow-step">
                     <div class="workflow-icon-container">
                         <span class="workflow-icon">🚀</span>
@@ -675,7 +688,7 @@
                         <p>Easily define projects, set objectives, and onboard team members. Our system provides templates and tools to get you started quickly, ensuring everyone is aligned from day one.</p>
                     </div>
                 </div>
-    
+
                 <div class="workflow-step">
                     <div class="workflow-icon-container">
                         <span class="workflow-icon">🔄</span>
@@ -685,10 +698,10 @@
                         <p>Assign tasks, track progress in real-time, and foster seamless communication. Integrated tools for file sharing, discussions, and approvals keep projects moving forward efficiently.</p>
                     </div>
                 </div>
-    
+
                 <div class="workflow-step">
                     <div class="workflow-icon-container">
-                        <span class="workflow-icon">💡</span> 
+                        <span class="workflow-icon">💡</span>
                     </div>
                     <div class="workflow-content">
                         <h3>3. Insightful Reporting & Optimization</h3>
@@ -718,7 +731,7 @@
                 if (target) {
                     target.scrollIntoView({
                         behavior: 'smooth',
-                        block: 'start' 
+                        block: 'start'
                     });
                 }
             });
@@ -728,8 +741,8 @@
         const header = document.querySelector('.header');
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
-            
-            if (currentScroll > 100) {
+
+            if (currentScroll > 50) {
                 header.style.background = 'rgba(255, 255, 255, 0.98)';
                 header.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.15)';
             } else {
@@ -740,36 +753,24 @@
 
         // Add loading animation for body
         window.addEventListener('load', () => {
-            setTimeout(() => { 
+            setTimeout(() => {
                 document.body.style.opacity = '1';
-            }, 50); 
-        });
-
-        // Interactive button effects
-        document.querySelectorAll('.cta-button, .nav-cta').forEach(button => {
-            button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-3px) scale(1.02)';
-            });
-            
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
+            }, 50);
         });
 
         // Parallax effect for hero section
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero');
-            
-            if (hero) { 
-                if (scrolled < window.innerHeight * 1.5) { // Apply only when hero is somewhat in view (extended a bit)
-                    const rate = scrolled * -0.25; // Reduced rate for more subtlety
-                    hero.style.transform = `translateY(${rate}px)`;
-                } else if (scrolled === 0) { // Reset if scrolled to top
-                     hero.style.transform = `translateY(0px)`;
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                if (scrolled < (heroSection.offsetTop + heroSection.offsetHeight + 200) && scrolled > (heroSection.offsetTop - window.innerHeight - 200) ) {
+                    const rate = (scrolled - heroSection.offsetTop) * -0.15;
+                    heroSection.style.transform = `translateY(${rate}px)`;
+                } else if (scrolled === 0) {
+                     heroSection.style.transform = `translateY(0px)`;
                 }
-            }
-        });
+            });
+        }
     </script>
 </body>
 </html>
