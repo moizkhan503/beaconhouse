@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Page - Enhanced</title>
+<style>
+  /* Basic Reset & Global Styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Nicer font stack */
+    background-color: #e9ecef; /* Softer light grey background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+  }
+
+  .login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 10px; /* Softer corners */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* More subtle shadow */
+    width: 380px; /* Slightly wider */
+    max-width: 90%; /* Responsive for smaller screens */
+  }
+
+  h2 {
+    text-align: center;
+    color: #007bff; /* Primary blue for the title */
+    margin-bottom: 30px; /* More space below title */
+    font-size: 2em; /* Larger title */
+    letter-spacing: 1px; /* Subtle letter spacing */
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px; /* Adjusted margin */
+    color: #495057; /* Softer grey for labels */
+    font-weight: 500; /* Slightly bolder labels */
+    font-size: 0.95rem;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 15px; /* Increased padding */
+    margin-bottom: 20px;
+    border: 1px solid #ced4da; /* Softer border color */
+    border-radius: 5px; /* Slightly rounded inputs */
+    font-size: 1rem;
+    color: #495057;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #007bff; /* Blue border on focus */
+    outline: 0; /* Remove default outline */
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* Blue glow effect */
+  }
+
+  /* Placeholder styling */
+  input::placeholder {
+    color: #adb5bd;
+    opacity: 1; /* Firefox */
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px; /* Consistent border radius */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold; /* Bolder button text */
+    letter-spacing: 0.5px; /* Subtle letter spacing */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+  }
+
+  button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  button:active {
+    transform: scale(0.98); /* Slight press effect */
+  }
+
+  .error-message {
+    color: #dc3545; /* Modern red for errors */
+    background-color: #f8d7da; /* Light red background for error */
+    border: 1px solid #f5c6cb; /* Red border for error */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px; /* Space below error message */
+    text-align: center;
+    font-size: 0.9em;
+    display: none; /* Hidden by default, shown by JS */
+  }
+</style>
+</head>
+<body>
+<div class="login-container">
+  <h2>Login</h2>
+  <div class="error-message" id="errorMsg"></div> <!-- Message will appear here -->
+  <label for="username">Username</label>
+  <input type="text" id="username" placeholder="Enter username" autocomplete="username">
+  <label for="password">Password</label>
+  <input type="password" id="password" placeholder="Enter password" autocomplete="current-password">
+  <button onclick="loginUser()">Login</button>
+</div>
+<script src="constant_user_details.js"></script>
+<script>
+  const errorMsgElement = document.getElementById('errorMsg');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+
+  function loginUser() {
+    const username = usernameInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    
+    errorMsgElement.textContent = ''; // Clear previous message text
+    errorMsgElement.style.display = 'none'; // Hide the error message div
+
+    if (!username || !password) {
+      errorMsgElement.textContent = 'Please enter both username and password.';
+      errorMsgElement.style.display = 'block'; // Show the error message div
+      return;
+    }
+
+    // Check if constantUsers is loaded and then check credentials
+    if (typeof constantUsers !== 'undefined' && constantUsers.hasOwnProperty(username) && constantUsers[username] === password) {
+      localStorage.setItem('loggedInUser', username); // Store username in localStorage
+      alert('Login successful! Welcome ' + username.charAt(0).toUpperCase() + username.slice(1));
+      window.location.href = 'dashboard.html'; // Redirect to dashboard
+    } else {
+      errorMsgElement.textContent = 'Invalid username or password.';
+      errorMsgElement.style.display = 'block'; // Show the error message div
+    }
+  }
+
+  // Optional: Clear error message when user starts typing again
+  usernameInput.addEventListener('input', () => {
+    if (errorMsgElement.style.display === 'block') {
+      errorMsgElement.textContent = '';
+      errorMsgElement.style.display = 'none';
+    }
+  });
+  passwordInput.addEventListener('input', () => {
+     if (errorMsgElement.style.display === 'block') {
+      errorMsgElement.textContent = '';
+      errorMsgElement.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>

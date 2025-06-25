@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Manager Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563EB; /* Blue for buttons and active states */
+            --primary-hover-color: #1D4ED8;
+            --secondary-button-bg: #E5E7EB;
+            --secondary-button-text: #374151;
+            --secondary-button-hover-bg: #D1D5DB;
+            --background-color: #F9FAFB; /* Light grey page background */
+            --card-background-color: #FFFFFF;
+            --text-dark: #111827;
+            --text-medium: #4B5563;
+            --text-light: #6B7280;
+            --border-color: #E5E7EB;
+            --profile-image-bg: #FFEADD; /* Light peach for profile image placeholder */
+            --progress-bar-track: #E5E7EB;
+            --progress-bar-fill: #34D399; /* Green for progress, can be changed */
+            --bottom-nav-active: var(--primary-color);
+            --bottom-nav-inactive: #6B7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .dashboard-wrapper { /* Centers content on larger screens */
+            display: flex;
+            justify-content: center;
+            padding: 0 10px; /* Some padding for very small screens */
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 600px; /* Max width for content area on desktop */
+            min-height: 100vh;
+            background-color: var(--card-background-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05); /* Subtle shadow for the container on desktop */
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--card-background-color);
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .back-arrow {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-medium);
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .app-header h1 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .app-content {
+            flex-grow: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            margin-bottom: 1rem;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .user-profile img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            background-color: var(--profile-image-bg); /* Placeholder bg */
+        }
+        .user-profile .info .name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .user-profile .info .role {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Team Overview */
+        .team-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .overview-card {
+            background-color: var(--card-background-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .overview-card .label {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .overview-card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Task Completion Chart */
+        .task-completion-chart-container {
+            margin-bottom: 2rem;
+            height: 220px; /* Fixed height for the chart container */
+        }
+
+        /* Progress Tracking */
+        .progress-tracking {
+            margin-bottom: 2rem;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .progress-header .label {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+        }
+        .progress-header .percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .progress-bar-container-custom {
+            width: 100%;
+            height: 8px; /* Height of the progress bar track */
+            background-color: var(--progress-bar-track);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill-custom {
+            height: 100%;
+            background-color: var(--text-dark); /* Using dark color as per image */
+            border-radius: 4px;
+            width: 75%; /* Example width */
+            transition: width 0.3s ease-in-out;
+        }
+
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-bottom: 2rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-buttons .btn {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+        .action-buttons .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .action-buttons .btn-primary:hover {
+            background-color: var(--primary-hover-color);
+        }
+        .action-buttons .btn-secondary {
+            background-color: var(--secondary-button-bg);
+            color: var(--secondary-button-text);
+        }
+        .action-buttons .btn-secondary:hover {
+            background-color: var(--secondary-button-hover-bg);
+        }
+
+        /* Meetings Tabs */
+        .meetings-section .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        .meetings-section .tab-button {
+            background: none;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            color: var(--text-medium);
+            cursor: pointer;
+            position: relative;
+            margin-right: 0.5rem; /* Space between tabs */
+        }
+        .meetings-section .tab-button.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .meetings-section .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        .meetings-section .tab-content {
+            display: none;
+        }
+        .meetings-section .tab-content.active {
+            display: block;
+        }
+        .meeting-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .meeting-item:last-child {
+            border-bottom: none;
+        }
+        .meeting-item .icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-light);
+            margin-right: 0.75rem;
+            background-color: var(--secondary-button-bg);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+        .meeting-item .details .title {
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        .meeting-item .details .time {
+            font-size: 0.8125rem;
+            color: var(--text-light);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-background-color);
+            position: sticky; /* Sticky footer */
+            bottom: 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            font-size: 0.75rem;
+            color: var(--bottom-nav-inactive);
+        }
+        .nav-item.active {
+            color: var(--bottom-nav-active);
+        }
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 0.25rem;
+            fill: currentColor;
+        }
+
+        /* Chart.js specific styling for tooltips if needed */
+        .chartjs-tooltip {
+            /* Custom tooltip styles */
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) { /* Tablet and Desktop */
+            .team-overview-grid {
+                /* Can fit more cards if needed, but auto-fit handles it well */
+            }
+             .dashboard-container {
+                margin-top: 20px; /* Add some space at the top on larger screens */
+                margin-bottom: 20px;
+                border-radius: 12px; /* Rounded corners for the container on desktop */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-container">
+            <header class="app-header">
+                <svg class="back-arrow" onclick="history.back()" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <h1>Line Manager Dashboard</h1>
+            </header>
+
+            <main class="app-content">
+                <section class="user-profile">
+                    <img src="https://i.imgur.com/gpHc5WQ.png" alt="Kanwal Malik"> <!-- Placeholder similar to image -->
+                    <div class="info">
+                        <div class="name">Kanwal Malik</div>
+                        <div class="role">Line Manager</div>
+                    </div>
+                </section>
+
+                <section class="team-overview">
+                    <h2 class="section-title">Team Overview</h2>
+                    <div class="team-overview-grid">
+                        <div class="overview-card">
+                            <span class="label">Tasks Completed</span>
+                            <div class="value">120</div>
+                        </div>
+                        <div class="overview-card">
+                            <span class="label">Tasks In Progress</span>
+                            <div class="value">35</div>
+                        </div>
+                        <div class="overview-card"> <!-- Full width on smaller, then adapts -->
+                            <span class="label">Team Members</span>
+                            <div class="value">15</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="task-completion">
+                    <h2 class="section-title">Task Completion</h2>
+                    <p class="section-subtitle">Tasks Completed by Team Member</p>
+                    <div class="task-completion-chart-container">
+                        <canvas id="taskCompletionChart"></canvas>
+                    </div>
+                </section>
+
+                <section class="progress-tracking">
+                    <h2 class="section-title">Progress Tracking</h2>
+                    <div class="progress-header">
+                        <span class="label">Overall Team Progress</span>
+                        <span class="percentage">75%</span>
+                    </div>
+                    <div class="progress-bar-container-custom">
+                        <div class="progress-bar-fill-custom" id="overallTeamProgressFill"></div>
+                    </div>
+                </section>
+
+                <section class="quick-actions">
+                    <h2 class="section-title">Quick Actions</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary">Assign Task</button>
+                        <button class="btn btn-secondary">View Team Members</button>
+                    </div>
+                </section>
+
+                <section class="meetings-section">
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="showMeetingTab('meetingsContent', this)">Meetings</button>
+                        <button class="tab-button" onclick="showMeetingTab('scheduleContent', this)">Schedule Meeting</button>
+                    </div>
+                    <div id="meetingsContent" class="tab-content active">
+                        <div class="meeting-item">
+                            <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                            <div class="details">
+                                <div class="title">Team Meeting</div>
+                                <div class="time">10:00 AM - 11:00 AM</div>
+                            </div>
+                        </div>
+                        <div class="meeting-item">
+                            <svg class="icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                            <div class="details">
+                                <div class="title">Project Review</div>
+                                <div class="time">2:00 PM - 3:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="scheduleContent" class="tab-content">
+                        <p>Schedule meeting form/content would go here.</p>
+                    </div>
+                </section>
+            </main>
+
+            <nav class="bottom-nav">
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    Home
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h18v-2H3v2zm0 5h18v-2H3v2zm0-9v2h18V9H3z"/></svg>
+                    Tasks
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    Team
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6V4h12v10zM4 20h16v2H4v-2z"/></svg>
+                    Reports
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                    Settings
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Task Completion Chart
+            const taskCtx = document.getElementById('taskCompletionChart').getContext('2d');
+            const taskCompletionChart = new Chart(taskCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Aisha Khan', 'Fatima Ali', 'Hira Ahmed', 'Zainab Malik', 'Sara Khan'],
+                    datasets: [{
+                        label: 'Tasks Completed',
+                        data: [70, 85, 60, 90, 75], // Example data, adjust heights visually
+                        backgroundColor: '#E5E7EB', // Light grey bars
+                        borderColor: '#D1D5DB',
+                        borderWidth: 1,
+                        borderRadius: { topLeft: 4, topRight: 4 }, // Rounded top corners
+                        barPercentage: 0.6, // Adjust bar width
+                        categoryPercentage: 0.7 // Adjust spacing between bars
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            display: false, // Hide Y axis
+                        },
+                        x: {
+                            grid: {
+                                display: false // Hide X axis grid lines
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                },
+                                color: 'var(--text-light)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hide legend
+                        },
+                        tooltip: {
+                            enabled: true, // Enable tooltips
+                            backgroundColor: 'var(--text-dark)',
+                            titleFont: { weight: 'normal'},
+                            bodyFont: { weight: 'bold'},
+                            callbacks: {
+                                label: function(context) {
+                                    return `Completed: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Overall Team Progress (Custom CSS bar update)
+            const progressFill = document.getElementById('overallTeamProgressFill');
+            // This would typically be dynamic, setting it here for visual demo
+            if (progressFill) {
+                progressFill.style.width = '75%';
+            }
+
+
+            // Tab functionality for Meetings
+            window.showMeetingTab = function(tabId, Tbutton) {
+                const contents = document.querySelectorAll('.meetings-section .tab-content');
+                contents.forEach(content => content.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+
+                const buttons = document.querySelectorAll('.meetings-section .tab-button');
+                buttons.forEach(btn => btn.classList.remove('active'));
+                Tbutton.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

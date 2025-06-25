@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Team Member Progress</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --page-bg-color: #F8F9FA;
+            --card-bg-color: #FFFFFF;
+            --border-color: #E9ECEF; /* Used for subtle borders */
+            --text-dark: #212529;
+            --text-medium: #495057;
+            --text-light: #6C757D;
+            /* Updated bar colors to silver tones */
+            --bar-fill-silver: #E5E7EB;  /* Light silver for bar fill */
+            --bar-top-line-silver: #D1D5DB; /* Slightly darker silver for top line */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--page-bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .analytics-page-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .analytics-container {
+            width: 100%;
+            max-width: 500px;
+            min-height: 100vh;
+            background-color: var(--card-bg-color);
+            display: flex;
+            flex-direction: column;
+            /* Improved shadow for the main container */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--card-bg-color);
+            position: sticky; /* Keep header visible on scroll for mobile-like feel */
+            top: 0;
+            z-index: 10;
+        }
+
+        .app-header .back-arrow {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-medium);
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .app-header .header-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .app-content {
+            flex-grow: 1;
+            padding: 1.5rem 1.25rem;
+        }
+
+        .page-main-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .analytics-card {
+            background-color: var(--card-bg-color);
+            padding: 1.5rem;
+            border-radius: 10px; /* Slightly more rounded corners */
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            /* Improved shadow for individual cards */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .analytics-card .card-title {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--text-medium);
+            margin-bottom: 0.25rem;
+        }
+
+        .analytics-card .percentage {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .analytics-card .time-period {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-container {
+            height: 120px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 600px) {
+            .analytics-container {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+                min-height: auto;
+            }
+            .app-header {
+                position: static; /* Header doesn't need to be sticky on larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-page-wrapper">
+        <div class="analytics-container">
+            <header class="app-header">
+                <svg class="back-arrow" onclick="history.back()" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <div class="header-title">Analytics</div>
+            </header>
+
+            <main class="app-content">
+                <h1 class="page-main-title">Team Member Progress</h1>
+
+                <div class="analytics-card">
+                    <div class="card-title">Task Completion Rate</div>
+                    <div class="percentage">85%</div>
+                    <div class="time-period">Last 3 Months</div>
+                    <div class="chart-container">
+                        <canvas id="taskCompletionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-title">Project Involvement</div>
+                    <div class="percentage">70%</div>
+                    <div class="time-period">Last 3 Months</div>
+                    <div class="chart-container">
+                        <canvas id="projectInvolvementChart"></canvas>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get computed styles for CSS variables
+            const computedStyle = getComputedStyle(document.documentElement);
+            const barFillSilver = computedStyle.getPropertyValue('--bar-fill-silver').trim();
+            const barTopLineSilver = computedStyle.getPropertyValue('--bar-top-line-silver').trim();
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        display: false,
+                        beginAtZero: true,
+                        max: 100
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false,
+                        },
+                        ticks: {
+                            color: computedStyle.getPropertyValue('--text-light').trim(),
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                elements: {
+                    bar: {
+                        backgroundColor: barFillSilver,      // Use silver from CSS var
+                        borderColor: barTopLineSilver,       // Use darker silver for top line
+                        borderWidth: { top: 2, right: 0, bottom: 0, left: 0 },
+                        borderRadius: { topLeft: 3, topRight: 3 },
+                        borderSkipped: false,
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 5
+                    }
+                }
+            };
+
+            // Task Completion Chart
+            const taskCtx = document.getElementById('taskCompletionChart').getContext('2d');
+            new Chart(taskCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar'],
+                    datasets: [{
+                        data: [70, 85, 80],
+                        barPercentage: 0.5,
+                        categoryPercentage: 0.7
+                    }]
+                },
+                options: JSON.parse(JSON.stringify(chartOptions)) // Deep copy options
+            });
+
+            // Project Involvement Chart
+            const involvementCtx = document.getElementById('projectInvolvementChart').getContext('2d');
+            new Chart(involvementCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar'],
+                    datasets: [{
+                        data: [60, 70, 65],
+                        barPercentage: 0.5,
+                        categoryPercentage: 0.7
+                    }]
+                },
+                options: JSON.parse(JSON.stringify(chartOptions)) // Deep copy options
+            });
+        });
+    </script>
+</body>
+</html>

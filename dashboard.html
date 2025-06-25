@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Team Member Dashboard</title>
+<style>
+  :root {
+    --primary-blue: #5D9CEC;
+    --light-blue-button: #A0D2FF;
+    --light-blue-button-hover: #8ABEEF;
+    --text-dark: #1F2937;
+    --text-medium: #4B5563;
+    --text-light: #6B7280;
+    --bg-light-grey: #F9FAFB;
+    --bg-white: #FFFFFF;
+    --border-grey: #E5E7EB;
+    --view-button-bg: #F3F4F6;
+    --view-button-text: #374151;
+    --view-button-hover-bg: #E5E7EB;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-light-grey);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  .mobile-frame {
+    width: 400px;
+    max-width: 100%;
+    height: calc(100vh - 40px);
+    max-height: 850px;
+    background-color: var(--bg-white);
+    border: 8px solid var(--primary-blue);
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .app-header {
+    background-color: var(--primary-blue);
+    color: var(--bg-white);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .app-header .back-arrow {
+    font-size: 1.5em;
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  .app-header .header-title {
+    flex-grow: 1;
+  }
+
+  .app-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+
+  .user-profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 20px;
+    text-align: center;
+  }
+
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    background-color: #FFE0B2; /* Placeholder color if image fails */
+  }
+
+  .profile-name { /* Target this for username */
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+  }
+
+  .profile-details {
+    font-size: 0.95em;
+    color: var(--text-light);
+    line-height: 1.4;
+  }
+
+  .tabs-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border-grey);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+
+  .tab-button {
+    background: none;
+    border: none;
+    padding: 15px 10px;
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--text-medium);
+    cursor: pointer;
+    position: relative;
+    outline: none;
+  }
+
+  .tab-button.active {
+    color: var(--primary-blue);
+    font-weight: 600;
+  }
+
+  .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--primary-blue);
+    border-radius: 2px;
+  }
+
+  .tab-content {
+    padding: 0;
+  }
+  .tab-content.active {
+      display: block;
+  }
+
+  .section-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 25px 20px 15px 20px;
+  }
+  .tab-content p {
+      padding: 0 20px;
+      color: var(--text-medium);
+  }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-grey);
+  }
+  .task-item:last-child {
+      border-bottom: none;
+  }
+
+  .task-icon-container {
+    margin-right: 15px;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    background-color: var(--view-button-bg);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  .task-list-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .task-info {
+    flex-grow: 1;
+  }
+
+  .task-name {
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+
+  .task-due-date {
+    font-size: 0.85em;
+    color: var(--text-light);
+  }
+
+  .view-button {
+    background-color: var(--view-button-bg);
+    color: var(--view-button-text);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .view-button:hover {
+    background-color: var(--view-button-hover-bg);
+  }
+
+  .assign-task-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 40px);
+    margin: 30px 20px 10px 20px;
+    padding: 14px;
+    background-color: var(--light-blue-button);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .assign-task-button:hover {
+    background-color: var(--light-blue-button-hover);
+  }
+  .assign-task-button .plus-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    margin-right: 8px;
+  }
+
+  .in-app-upload-section {
+    padding: 20px;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-grey);
+  }
+  .in-app-upload-section h2 {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+  .in-app-upload-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-medium);
+    font-weight: 500;
+  }
+  .in-app-upload-section input[type="file"] {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid var(--border-grey);
+    border-radius: 6px;
+    font-size: 0.95em;
+  }
+  .in-app-upload-section .upload-pdf-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .in-app-upload-section .upload-pdf-button:hover {
+    background-color: #3B82F6;
+  }
+  .in-app-upload-section .message {
+    color: red;
+    background-color: #FEE2E2;
+    border: 1px solid #FCA5A5;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    display: none;
+  }
+  .in-app-upload-section .upload-item {
+    background: #E0E7FF;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #3730A3;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="mobile-frame">
+    <div class="app-header">
+        <span class="back-arrow" onclick="history.back()">←</span>
+        <span class="header-title">Team Member Dashboard</span>
+    </div>
+
+    <div class="app-content">
+        <div class="user-profile-section">
+            <!-- Image is static, alt text will be updated -->
+            <img src="https://i.imgur.com/HVIitar.png" alt="User Profile Image" class="profile-image">
+            <!-- Name will be dynamically set by JavaScript -->
+            <div class="profile-name">User Name</div>
+            <div class="profile-details">Project Manager</div>
+            <div class="profile-details">Beaconhouse Education</div>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="showTab('tasks', this)">Tasks</button>
+            <button class="tab-button" onclick="showTab('meetings', this)">Meetings</button>
+        </div>
+
+        <div class="tab-content active" id="tasks">
+            <h3 class="section-title">Assigned Tasks</h3>
+            <div class="task-item">
+                <div class="task-icon-container">
+                    <svg class="task-list-icon" viewBox="0 0 24 24"><path d="M3 13h18v-2H3v2zm0 5h18v-2H3v2zm0-9v2h18V9H3z"></path></svg>
+                </div>
+                <div class="task-info">
+                    <div class="task-name">Project Alpha - Phase 1</div>
+                    <div class="task-due-date">Due: July 15, 2024</div>
+                </div>
+                <button class="view-button">View</button>
+            </div>
+            <div class="task-item">
+                 <div class="task-icon-container">
+                    <svg class="task-list-icon" viewBox="0 0 24 24"><path d="M3 13h18v-2H3v2zm0 5h18v-2H3v2zm0-9v2h18V9H3z"></path></svg>
+                </div>
+                <div class="task-info">
+                    <div class="task-name">Develop Training Module</div>
+                    <div class="task-due-date">Due: July 20, 2024</div>
+                </div>
+                <button class="view-button">View</button>
+            </div>
+
+            <h3 class="section-title">In Progress</h3>
+            <div class="task-item">
+                <div class="task-icon-container">
+                    <svg class="task-list-icon" viewBox="0 0 24 24"><path d="M3 13h18v-2H3v2zm0 5h18v-2H3v2zm0-9v2h18V9H3z"></path></svg>
+                </div>
+                <div class="task-info">
+                    <div class="task-name">Market Research</div>
+                    <div class="task-due-date">Started: July 1, 2024</div>
+                </div>
+                <button class="view-button">View</button>
+            </div>
+
+            <h3 class="section-title">Completed Tasks</h3>
+            <div class="task-item">
+                <div class="task-icon-container">
+                    <svg class="task-list-icon" viewBox="0 0 24 24"><path d="M3 13h18v-2H3v2zm0 5h18v-2H3v2zm0-9v2h18V9H3z"></path></svg>
+                </div>
+                <div class="task-info">
+                    <div class="task-name">Initial Project Planning</div>
+                    <div class="task-due-date">Completed: June 28, 2024</div>
+                </div>
+                <button class="view-button">View</button>
+            </div>
+            
+        </div>
+
+        <div class="tab-content" id="meetings" style="display:none;">
+            <h3 class="section-title">Meetings</h3>
+            <p>No meetings scheduled.</p>
+        </div>
+
+        <div class="in-app-upload-section">
+          <h2>Upload Project Update (PDF)</h2>
+          <div class="message" id="message"></div>
+          <label for="pdfUpload">Select PDF file:</label>
+          <input type="file" id="pdfUpload" accept="application/pdf">
+          <button onclick="uploadPDF()" class="upload-pdf-button">Upload</button>
+          <div class="upload-list" id="uploadList"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // User Authentication and Display Logic
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    const userNameDisplayElement = document.querySelector('.user-profile-section .profile-name');
+    const userImageElement = document.querySelector('.user-profile-section .profile-image');
+
+    if (!loggedInUser) {
+      alert('You are not logged in. Redirecting to login page.');
+      window.location.href = 'loginpage.html'; // Ensure this matches your login page filename
+      return; // Stop further script execution
+    }
+
+    if (userNameDisplayElement) {
+      const formattedUserName = loggedInUser.charAt(0).toUpperCase() + loggedInUser.slice(1);
+      userNameDisplayElement.textContent = formattedUserName;
+    }
+    if (userImageElement) {
+      // Update alt text for accessibility, image source remains static
+      userImageElement.alt = loggedInUser.charAt(0).toUpperCase() + loggedInUser.slice(1) + "'s profile image";
+    }
+
+    // Tab Functionality (existing from previous code)
+    const firstActiveButton = document.querySelector('.tabs-container .tab-button.active');
+    if (firstActiveButton) {
+        const activeTabName = firstActiveButton.getAttribute('onclick').match(/'([^']+)'/)[1];
+        showTab(activeTabName, firstActiveButton);
+    } else {
+        const firstButton = document.querySelector('.tabs-container .tab-button');
+        if(firstButton) {
+            const tabName = firstButton.getAttribute('onclick').match(/'([^']+)'/)[1];
+            showTab(tabName, firstButton);
+        }
+    }
+    
+    // Ensure upload message div is hidden on load
+    const messageElem = document.getElementById('message');
+    if(messageElem) messageElem.style.display = 'none';
+  });
+
+  function showTab(tabName, clickedButton) {
+    const tabs = document.querySelectorAll('.app-content .tab-content');
+    tabs.forEach(tab => {
+      if (tab) tab.style.display = 'none';
+    });
+    
+    const activeTab = document.getElementById(tabName);
+    if (activeTab) activeTab.style.display = 'block';
+
+    const buttons = document.querySelectorAll('.tabs-container .tab-button');
+    buttons.forEach(button => {
+      if (button) button.classList.remove('active');
+    });
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+  }
+
+  function uploadPDF() {
+    const fileInput = document.getElementById('pdfUpload');
+    const messageElem = document.getElementById('message');
+    const uploadList = document.getElementById('uploadList');
+
+    if (!fileInput || !messageElem || !uploadList) {
+        console.error("Upload feature elements not found.");
+        return;
+    }
+    messageElem.textContent = '';
+    messageElem.style.display = 'none';
+
+    if (fileInput.files.length === 0) {
+      messageElem.textContent = 'Please select a PDF file to upload.';
+      messageElem.style.display = 'block';
+      return;
+    }
+
+    const file = fileInput.files[0];
+    if (file.type !== 'application/pdf') {
+      messageElem.textContent = 'Only PDF files are allowed.';
+      messageElem.style.display = 'block';
+      return;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'upload-item';
+    item.textContent = `Uploaded: ${file.name}`;
+    uploadList.appendChild(item);
+
+    fileInput.value = '';
+  }
+</script>
+
+</body>
+</html>
