@@ -312,20 +312,87 @@
             fill: currentColor;
         }
 
-        /* Chart.js specific styling for tooltips if needed */
-        .chartjs-tooltip {
-            /* Custom tooltip styles */
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 200; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+            align-items: center; /* Vertical centering */
+            justify-content: center; /* Horizontal centering */
         }
+
+        .modal-content {
+            background-color: var(--card-background-color);
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .close-button {
+            color: var(--text-light);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--text-dark);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .team-member-list {
+            list-style-type: none;
+            padding: 0;
+            max-height: 200px; /* Limit height and allow scroll */
+            overflow-y: auto;
+        }
+        .team-member-list li {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+            color: var(--text-medium);
+        }
+        .team-member-list li:last-child {
+            border-bottom: none;
+        }
+        .team-member-list li:hover {
+            background-color: var(--secondary-button-bg);
+            color: var(--text-dark);
+        }
+
 
         /* Responsive adjustments */
         @media (min-width: 768px) { /* Tablet and Desktop */
-            .team-overview-grid {
-                /* Can fit more cards if needed, but auto-fit handles it well */
-            }
-             .dashboard-container {
+            .dashboard-container {
                 margin-top: 20px; /* Add some space at the top on larger screens */
                 margin-bottom: 20px;
                 border-radius: 12px; /* Rounded corners for the container on desktop */
+            }
+             .app-header, .bottom-nav {
+                position: static; /* Header and Nav not sticky on larger screens */
             }
         }
 
@@ -361,7 +428,7 @@
                             <span class="label">Tasks In Progress</span>
                             <div class="value">35</div>
                         </div>
-                        <div class="overview-card"> <!-- Full width on smaller, then adapts -->
+                        <div class="overview-card">
                             <span class="label">Team Members</span>
                             <div class="value">15</div>
                         </div>
@@ -391,7 +458,8 @@
                     <h2 class="section-title">Quick Actions</h2>
                     <div class="action-buttons">
                         <button class="btn btn-primary">Assign Task</button>
-                        <button class="btn btn-secondary">View Team Members</button>
+                        <!-- Updated button to open modal -->
+                        <button class="btn btn-secondary" onclick="openTeamModal()">View Team Members</button>
                     </div>
                 </section>
 
@@ -440,14 +508,75 @@
                     Reports
                 </a>
                 <a href="#" class="nav-item">
-                    <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
                     Settings
                 </a>
             </nav>
+
+            <!-- Modal for Team Members -->
+            <div id="teamMembersModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-button" onclick="closeTeamModal()">×</span>
+                    <h3>Select Team Member</h3>
+                    <ul id="teamMemberList" class="team-member-list">
+                        <!-- Team members will be populated here by JS -->
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
+        // Team member data
+        const constantUsers = {
+            "soofia": "beaconhouse123",
+            "bushra": "beaconhouse123",
+            "sania": "beaconhouse123",
+            "asma": "beaconhouse123",
+            "shamsa": "beaconhouse123",
+            "shahzadi": "beaconhouse123",
+            "amna": "beaconhouse123"
+        };
+
+        const teamModal = document.getElementById('teamMembersModal');
+        const teamMemberList = document.getElementById('teamMemberList');
+
+        function populateTeamList() {
+            teamMemberList.innerHTML = ''; // Clear existing list
+            for (const username in constantUsers) {
+                if (constantUsers.hasOwnProperty(username)) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = username.charAt(0).toUpperCase() + username.slice(1); // Capitalize
+                    listItem.dataset.username = username; // Store actual username
+                    listItem.addEventListener('click', function() {
+                        const selectedUsername = this.dataset.username;
+                        localStorage.setItem('loggedInUser', selectedUsername);
+                        window.location.href = 'dashboard.html'; // Redirect to team member's dashboard
+                        closeTeamModal();
+                    });
+                    teamMemberList.appendChild(listItem);
+                }
+            }
+        }
+
+        function openTeamModal() {
+            populateTeamList();
+            if (teamModal) teamModal.style.display = 'flex'; // Use flex for centering
+        }
+
+        function closeTeamModal() {
+            if (teamModal) teamModal.style.display = 'none';
+        }
+
+        // Close modal if user clicks outside of the modal content
+        window.onclick = function(event) {
+            if (event.target == teamModal) {
+                closeTeamModal();
+            }
+        }
+
+
         document.addEventListener('DOMContentLoaded', function () {
             // Task Completion Chart
             const taskCtx = document.getElementById('taskCompletionChart').getContext('2d');
@@ -457,13 +586,13 @@
                     labels: ['Aisha Khan', 'Fatima Ali', 'Hira Ahmed', 'Zainab Malik', 'Sara Khan'],
                     datasets: [{
                         label: 'Tasks Completed',
-                        data: [70, 85, 60, 90, 75], // Example data, adjust heights visually
-                        backgroundColor: '#E5E7EB', // Light grey bars
+                        data: [70, 85, 60, 90, 75], 
+                        backgroundColor: '#E5E7EB',
                         borderColor: '#D1D5DB',
                         borderWidth: 1,
-                        borderRadius: { topLeft: 4, topRight: 4 }, // Rounded top corners
-                        barPercentage: 0.6, // Adjust bar width
-                        categoryPercentage: 0.7 // Adjust spacing between bars
+                        borderRadius: { topLeft: 4, topRight: 4 },
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.7
                     }]
                 },
                 options: {
@@ -472,11 +601,11 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            display: false, // Hide Y axis
+                            display: false, 
                         },
                         x: {
                             grid: {
-                                display: false // Hide X axis grid lines
+                                display: false 
                             },
                             ticks: {
                                 font: {
@@ -488,10 +617,10 @@
                     },
                     plugins: {
                         legend: {
-                            display: false // Hide legend
+                            display: false 
                         },
                         tooltip: {
-                            enabled: true, // Enable tooltips
+                            enabled: true, 
                             backgroundColor: 'var(--text-dark)',
                             titleFont: { weight: 'normal'},
                             bodyFont: { weight: 'bold'},
@@ -507,11 +636,9 @@
 
             // Overall Team Progress (Custom CSS bar update)
             const progressFill = document.getElementById('overallTeamProgressFill');
-            // This would typically be dynamic, setting it here for visual demo
             if (progressFill) {
                 progressFill.style.width = '75%';
             }
-
 
             // Tab functionality for Meetings
             window.showMeetingTab = function(tabId, Tbutton) {
